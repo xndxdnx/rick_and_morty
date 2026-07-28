@@ -1,5 +1,6 @@
 package com.example.rickandmorty.data.mappers
 
+import com.example.rickandmorty.data.local.entity.FavoriteCharacterEntity
 import com.example.rickandmorty.data.remote.dto.CharacterDto
 import com.example.rickandmorty.data.remote.dto.EpisodeDto
 import com.example.rickandmorty.data.remote.dto.LocationDto
@@ -10,6 +11,7 @@ import com.example.rickandmorty.domain.model.CharacterStatus
 import com.example.rickandmorty.domain.model.Episode
 import com.example.rickandmorty.domain.model.Location
 import com.example.rickandmorty.domain.model.PaginatedResult
+import kotlin.Int
 
 
 fun CharacterDto.toDomain(): Character = Character(
@@ -56,4 +58,28 @@ fun <R> PaginatedInfoDto.toDomain (
     hasNextPage = next != null
 )
 
-//fun Character.toFavoriteEntity () : Favorite
+fun Character.toFavoriteEntity () : FavoriteCharacterEntity = FavoriteCharacterEntity(
+    id = id,
+    name = name,
+    status = status.name,
+    species = species,
+    type = type,
+    gender = gender,
+    originName = originName,
+    locationName = locationName,
+    imageUrl = imageUrl,
+    episodeCount = episodeCount
+)
+
+fun FavoriteCharacterEntity.toDomain() : Character = Character(
+    id = id,
+    name = name,
+    status = CharacterStatus.valueOf(status),
+    species = species,
+    type = type,
+    gender = gender,
+    originName = originName,
+    locationName = locationName,
+    imageUrl = imageUrl,
+    episodeCount = episodeCount
+)
