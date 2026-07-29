@@ -24,7 +24,7 @@ fun CharacterDto.toDomain(): Character = Character(
     originName = origin.name,
     locationName = location.name,
     imageUrl = image,
-    episodeCount = episode.size,
+    episodeCount = episode.size
 )
 
 fun LocationDto.toDomain(): Location = Location(
@@ -32,7 +32,7 @@ fun LocationDto.toDomain(): Location = Location(
     name = name,
     type = type.ifBlank { "Unknown" },
     dimension = dimension,
-    residentsCount = residents.size,
+    residentsCount = residents.size
 )
 
 fun EpisodeDto.toDomain(): Episode = Episode(
@@ -40,13 +40,14 @@ fun EpisodeDto.toDomain(): Episode = Episode(
     name = name,
     airDate = airDate,
     code = episode,
-    charactersCount = characters.size,
+    charactersCount = characters.size
 )
 
 fun <T, R> PaginatedResponseDto<T>.toDomain(
     page: Int,
     mapper: (T) -> R
 ) : PaginatedResult<R> = info.toDomain (page, results.map(mapper))
+
 
 fun <R> PaginatedInfoDto.toDomain (
     page: Int,
