@@ -10,7 +10,7 @@ import com.example.rickandmorty.data.local.entity.FavoriteCharacterEntity
     version = 1,
     exportSchema = false
 )
-abstract class FavoriteDatabase : RoomDatabase () {
+abstract class RickAndMortyDatabase : RoomDatabase () {
     
     abstract fun favoriteDao() : FavoriteDao
 }
