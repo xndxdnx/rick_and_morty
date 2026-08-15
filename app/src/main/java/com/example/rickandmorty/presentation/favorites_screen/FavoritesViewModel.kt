@@ -53,6 +53,17 @@ class FavoritesViewModel @Inject constructor(
         )
     }
     
+    fun onConfirmRemoteFavorite(
+        characterId: Int
+    ) {
+        viewModelScope.launch { 
+            favoriteRepository.removeFromFavorite(characterId = characterId)
+            showSnackBar(
+                message = "Removed From Favorites"
+            )
+        }
+    }
+    
     
     
 }

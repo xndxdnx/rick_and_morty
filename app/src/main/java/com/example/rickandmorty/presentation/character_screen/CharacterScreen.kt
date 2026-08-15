@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.rickandmorty.presentation.components.CharacterCard
 import com.example.rickandmorty.presentation.components.EmptyState
@@ -30,7 +31,7 @@ import com.example.rickandmorty.presentation.components.RickAndMortySearchBar
 @Composable
 fun CharacterScreen(
     modifier: Modifier = Modifier,
-    viewModel: CharactersScreenViewModel
+    viewModel: CharactersScreenViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.charactersUiState.collectAsStateWithLifecycle()
 

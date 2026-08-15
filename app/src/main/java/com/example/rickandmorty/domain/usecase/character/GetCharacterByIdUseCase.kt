@@ -10,7 +10,6 @@ class GetCharacterByIdUseCase @Inject constructor(
 
     suspend operator fun invoke(id: Int): Result<Character> {
         return repository.getCharacterById(id = id)
-
     }
     
 }
