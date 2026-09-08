@@ -48,7 +48,7 @@ fun CharacterCard(
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSurfaceVariant
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
         Row(

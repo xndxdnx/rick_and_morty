@@ -17,12 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.rickandmorty.presentation.common.efects.LazyListPaginationEffect
 import com.example.rickandmorty.presentation.components.CharacterCard
 import com.example.rickandmorty.presentation.components.EmptyState
 import com.example.rickandmorty.presentation.components.LoadingState
@@ -37,19 +39,26 @@ fun CharacterScreen(
 
     val listState = rememberLazyListState()
 
-    val shouldLoadMore by remember {
-        derivedStateOf {
-            
-            val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            
-            lastVisible >= uiState.value.characters.lastIndex - 2 && uiState.value.hasNextPage
-        }
-    }
+//    val shouldLoadMore by remember {
+//        derivedStateOf {
+//            val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+//            lastVisible >= uiState.value.characters.lastIndex - 2 && uiState.value.hasNextPage
+//        }
+//    }
+//
+//    LaunchedEffect(shouldLoadMore) {
+//        if (shouldLoadMore) viewModel.onLoadMore()
+//    }
 
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) viewModel.onLoadMore()
-    }
-
+    LazyListPaginationEffect(
+        listState = listState,
+        itemCount = uiState.value.characters.size,
+        hasNextPage = uiState.value.hasNextPage,
+        isLoading = uiState.value.isLoading,
+        isLoadingMore = uiState.value.isLoadingMore,
+        onLoadMore = viewModel::onLoadMore
+    )
+    
 
     Column(
         modifier = Modifier
@@ -101,6 +110,9 @@ fun CharacterScreen(
                 )
             }
             else -> {
+                
+                // showLoadMoreButton
+                
                 LazyColumn(
                     state = listState,
                     contentPadding = PaddingValues(bottom = 16.dp),
@@ -129,6 +141,16 @@ fun CharacterScreen(
                             }
                         }
                     }
+
+                    if (uiState.value.hasNextPage && !uiState.value.isLoadingMore && !listState.canScrollForward) {
+                        item {
+                            Button(
+                                onClick = viewModel::onLoadMore,
+                                modifier = Modifier.fillMaxWidth().padding(8.dp)
+                            ) { Text(text = "Load More")}
+                        }
+                    }
+                    
                     
                 }
             }

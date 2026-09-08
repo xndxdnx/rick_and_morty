@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -32,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.rickandmorty.domain.model.ApiCategory
 import com.example.rickandmorty.domain.model.Episode
 import com.example.rickandmorty.domain.model.Location
+import com.example.rickandmorty.presentation.common.efects.LazyListPaginationEffect
 import com.example.rickandmorty.presentation.components.EmptyState
 import com.example.rickandmorty.presentation.components.LoadingState
 
@@ -41,7 +43,7 @@ fun CategoryScreen(
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -222,18 +224,28 @@ private fun EpisodesList(
 ) {
     val listState = rememberLazyListState()
 
-    val shouldLoadMore by remember {
-        // -> Вычисляет производное состояние онон изменяется только при изменении зависимых значений (listState, locations)
-        derivedStateOf {
-            val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            lastVisible >= episodes.lastIndex - 2 && hasMore
-        }
-    }
+//    val shouldLoadMore by remember {
+//        // -> Вычисляет производное состояние онон изменяется только при изменении зависимых значений (listState, locations)
+//        derivedStateOf {
+//            val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+//            lastVisible >= episodes.lastIndex - 2 && hasMore
+//        }
+//    }
+//
+//    LaunchedEffect(shouldLoadMore) {
+//        if (shouldLoadMore) onLoadMore()
+//    }
 
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) onLoadMore()
-    }
+    LazyListPaginationEffect(
+        listState = listState,
+        itemCount = episodes.size,
+        hasNextPage = hasMore,
+        isLoading = isLoading,
+        isLoadingMore = isLoadingMore,
+        onLoadMore = onLoadMore
+    )
 
+    
     when {
         isLoading -> {
             LoadingState(
@@ -276,6 +288,15 @@ private fun EpisodesList(
                             LoadingState()
                         }
 
+                    }
+                }
+                
+                if (hasMore && !isLoadingMore && !listState.canScrollForward) {
+                    item { 
+                        Button(
+                            onClick = onLoadMore,
+                            modifier = Modifier.fillMaxWidth().padding(8.dp)
+                        ) { Text(text = "Load More")}
                     }
                 }
 
@@ -321,10 +342,7 @@ private fun EpisodesCard(
     }
 }
 
-
-
-
-        @Composable
+@Composable
 private fun LocationList(
     locations: List<Location>,
     isLoading: Boolean,
@@ -337,18 +355,28 @@ private fun LocationList(
 
     val listState = rememberLazyListState()
 
-    val shouldLoadMore by remember {
-        // -> Вычисляет производное состояние онон изменяется только при изменении зависимых значений (listState, locations)
-        derivedStateOf {
-            val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            lastVisible >= locations.lastIndex - 2 && hasMore
-        }
-    }
+//    val shouldLoadMore by remember {
+//        // -> Вычисляет производное состояние онон изменяется только при изменении зависимых значений (listState, locations)
+//        derivedStateOf {
+//            val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+//            lastVisible >= locations.lastIndex - 2 && hasMore
+//        }
+//    }
+//
+//    LaunchedEffect(shouldLoadMore) {
+//        if (shouldLoadMore) onLoadMore()
+//
+//    }
 
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) onLoadMore()
-
-    }
+    LazyListPaginationEffect(
+        listState = listState,
+        itemCount = locations.size,
+        hasNextPage = hasMore,
+        isLoading = isLoading,
+        isLoadingMore = isLoadingMore,
+        onLoadMore = onLoadMore
+    )
+    
 
     when {
         isLoading -> {
@@ -394,6 +422,15 @@ private fun LocationList(
                             )
                         }
 
+                    }
+                }
+
+                if (hasMore && !isLoadingMore && !listState.canScrollForward) {
+                    item {
+                        Button(
+                            onClick = onLoadMore,
+                            modifier = Modifier.fillMaxWidth().padding(8.dp)
+                        ) { Text(text = "Load More")}
                     }
                 }
 

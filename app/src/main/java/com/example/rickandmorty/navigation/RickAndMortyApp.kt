@@ -42,9 +42,6 @@ fun RickAndMortyApp(
     val snackBarHostState = RememberSnackBarHostState()
 
     val favoritesViewModel: FavoritesViewModel = hiltViewModel()
-
-    
-    
     
     ObserveUiEvents(
         uiEvents = favoritesViewModel.uiEvent,
