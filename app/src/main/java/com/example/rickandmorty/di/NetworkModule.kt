@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,17 +18,19 @@ import kotlin.apply
 object NetworkModule {
 
     private const val BASE_URL = "https://rickandmortyapi.com/api/"
-
+    
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(
-                interceptor = HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BASIC
-                }
-            )
-            .build()
+    fun provideConnectionPool() : ConnectionPool  = OkhttpConfig.apiConnectionPull()
+    
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        connectionPool: ConnectionPool
+    ): OkHttpClient {
+        return OkhttpConfig.apiClientBuilder(
+            connectionPool = connectionPool
+        ).build()
     }
 
     @Provides
@@ -48,6 +51,6 @@ object NetworkModule {
     ): RickAndMortyApi {
         return retrofit.create(RickAndMortyApi::class.java)
     }
-
+    
 
 }
