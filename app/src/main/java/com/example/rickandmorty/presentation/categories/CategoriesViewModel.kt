@@ -103,6 +103,15 @@ class CategoriesViewModel @Inject constructor(
                 page = state.episodesPage + 1
             )
         }
+        
+        _uiState.update { state ->
+            state.copy(
+                isLoadingMoreEpisodes = true
+            )
+        }
+
+        loadEpisodes(page = state.episodesPage+1, append = true)
+        
     }
     
     fun onLoadMoreLocations() {
@@ -114,6 +123,13 @@ class CategoriesViewModel @Inject constructor(
                 page = state.locationPage + 1
             )
         }
+        _uiState.update { state ->
+            state.copy(
+                isLoadingMoreLocations = true
+            )
+        }
+        
+        loadLocations(page = state.locationPage+1, append = true)
     }
     
     
@@ -151,10 +167,10 @@ class CategoriesViewModel @Inject constructor(
                             errorMessage = state.errorMessage,
                             )
                     }
-                    showError(
-                        title = "Portal Malfunction",
-                        message = "Failed to load Episodes"
-                    )
+//                    showError(
+//                        title = "Portal Malfunction",
+//                        message = "Failed to load Episodes"
+//                    )
                 }
         }
 
@@ -194,10 +210,10 @@ class CategoriesViewModel @Inject constructor(
                             errorMessage = state.errorMessage,
                         )
                     }
-                    showError(
-                        title = "Portal Malfunction",
-                        message = "Failed to load Locations"
-                    )
+//                    showError(
+//                        title = "Portal Malfunction",
+//                        message = "Failed to load Locations"
+//                    )
                 }
         }
 

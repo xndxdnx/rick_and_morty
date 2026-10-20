@@ -54,10 +54,7 @@ fun ObserveDialogEvents(
                     .onSuccess { detailCharacter = it }
                     .onFailure {
                         detailCharacter = null
-                        activeDialog = DialogEvent.ShowError(
-                            title = "Portal malfunction",
-                            message = it.message ?: "Character not found",
-                        )
+                        activeDialog = null
                     }
             } else {
                 detailCharacter = null
@@ -65,57 +62,153 @@ fun ObserveDialogEvents(
         }
     }
 
-    DialogEventContent(
-        dialog = activeDialog,
-        detailCharacter = detailCharacter,
-        onDismiss = {
-            activeDialog = null
-            detailCharacter = null
-        },
-        onConfirmRemoveFavorite = { characterId ->
-            onConfirmRemoveFavorite(characterId)
-            activeDialog = null
-        },
-    )
-}
-
-@Composable
-internal fun DialogEventContent(
-    dialog: DialogEvent?,
-    detailCharacter: Character?,
-    onDismiss: () -> Unit,
-    onConfirmRemoveFavorite: (Int) -> Unit,
-) {
-    when (dialog) {
-        is DialogEvent.ShowError -> {
-            ErrorDialog(
-                title = dialog.title,
-                message = dialog.message,
-                onDismiss = onDismiss,
-            )
-        }
-
+    when (val dialog = activeDialog) {
         is DialogEvent.ShowCharacterDetails -> {
             detailCharacter?.let { character ->
-                CharacterDetailsDialog(
-                    character = character,
-                    onDismiss = onDismiss,
+                AlertDialog(
+                    onDismissRequest = {
+                        activeDialog = null
+                        detailCharacter = null
+                    },
+                    title = { Text(character.name) },
+                    text = { CharacterDetailContent(character = character) },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            activeDialog = null
+                            detailCharacter = null
+                        }) {
+                            Text(text = "Close")
+                        }
+                    },
                 )
             }
         }
 
         is DialogEvent.ConfirmRemoveFavorite -> {
-            ConfirmRemoveFavoriteDialog(
-                characterId = dialog.characterId,
-                characterName = dialog.name,
-                onConfirm = onConfirmRemoveFavorite,
-                onDismiss = onDismiss,
+            AlertDialog(
+                onDismissRequest = { activeDialog = null },
+                title = { Text(text = "Remove From Favorites") },
+                text = {
+                    Text(
+                        stringResource(
+                            R.string.remove_favorite_message,
+                            dialog.name,
+                        ),
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        onConfirmRemoveFavorite(dialog.characterId)
+                        activeDialog = null
+                    }) {
+                        Text(text = "Remove")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { activeDialog = null }) {
+                        Text(text = "Cancel")
+                    }
+                },
             )
         }
 
         null -> Unit
     }
 }
+
+
+fun CharacterStatus.displayName(): String = when (this) {
+    CharacterStatus.ALIVE -> "Alive"
+    CharacterStatus.DEAD -> "Dead"
+    CharacterStatus.UNKNOWN -> "Unknown"
+}
+
+
+
+
+
+//@Composable
+//fun ObserveDialogEvents(
+//    dialogEvents: Flow<DialogEvent>,
+//    getCharacterByIdUseCase: GetCharacterByIdUseCase,
+//    onConfirmRemoveFavorite: (Int) -> Unit = {},
+//) {
+//    var activeDialog by remember { mutableStateOf<DialogEvent?>(null) }
+//    var detailCharacter by remember { mutableStateOf<Character?>(null) }
+//
+//    LaunchedEffect(dialogEvents) {
+//        dialogEvents.collect { event ->
+//            activeDialog = event
+//            if (event is DialogEvent.ShowCharacterDetails) {
+//                getCharacterByIdUseCase(event.characterId)
+//                    .onSuccess { detailCharacter = it }
+//                    .onFailure {
+//                        detailCharacter = null
+//                        activeDialog = null
+////                        activeDialog = DialogEvent.ShowError(
+////                            title = "Portal malfunction",
+////                            message = it.message ?: "Character not found",
+////                        )
+//                    }
+//            } else {
+//                detailCharacter = null
+//            }
+//        }
+//    }
+//
+//    DialogEventContent(
+//        dialog = activeDialog,
+//        detailCharacter = detailCharacter,
+//        onDismiss = {
+//            activeDialog = null
+//            detailCharacter = null
+//        },
+//        onConfirmRemoveFavorite = { characterId ->
+//            onConfirmRemoveFavorite(characterId)
+//            activeDialog = null
+//        },
+//    )
+//}
+
+//@Composable
+//internal fun DialogEventContent(
+//    dialog: DialogEvent?,
+//    detailCharacter: Character?,
+//    onDismiss: () -> Unit,
+//    onConfirmRemoveFavorite: (Int) -> Unit,
+//) {
+//    var activeDialog by remember { mutableStateOf<DialogEvent?>(null) }
+//   
+//    when (dialog = a) {
+//        is DialogEvent.ShowError -> {
+//            ErrorDialog(
+//                title = dialog.title,
+//                message = dialog.message,
+//                onDismiss = onDismiss,
+//            )
+//        }
+//
+//        is DialogEvent.ShowCharacterDetails -> {
+//            detailCharacter?.let { character ->
+//                CharacterDetailsDialog(
+//                    character = character,
+//                    onDismiss = onDismiss,
+//                )
+//            }
+//        }
+//
+//        is DialogEvent.ConfirmRemoveFavorite -> {
+//            ConfirmRemoveFavoriteDialog(
+//                characterId = dialog.characterId,
+//                characterName = dialog.name,
+//                onConfirm = onConfirmRemoveFavorite,
+//                onDismiss = onDismiss,
+//            )
+//        }
+//
+//        null -> Unit
+//    }
+//}
 
 @Composable
 internal fun ErrorDialog(
@@ -235,8 +328,8 @@ private fun previewCharacter() = Character(
     episodeCount = 51,
 )
 
-fun CharacterStatus.displayName(): String = when (this) {
-    CharacterStatus.ALIVE -> "Alive"
-    CharacterStatus.DEAD -> "Dead"
-    CharacterStatus.UNKNOWN -> "Unknown"
-}
+//fun CharacterStatus.displayName(): String = when (this) {
+//    CharacterStatus.ALIVE -> "Alive"
+//    CharacterStatus.DEAD -> "Dead"
+//    CharacterStatus.UNKNOWN -> "Unknown"
+//}

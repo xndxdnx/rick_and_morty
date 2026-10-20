@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RickAndMorty</string>
+    <string name="remove_favorite_message">Remove %1$s from your squad?</string>
+
 </resources>

@@ -41,18 +41,18 @@ fun RickAndMortyApp(
 
     val snackBarHostState = RememberSnackBarHostState()
 
-    val favoritesViewModel: FavoritesViewModel = hiltViewModel()
-    
-    ObserveUiEvents(
-        uiEvents = favoritesViewModel.uiEvent,
-        snackbarHostState = snackBarHostState
-    )
-
-    ObserveDialogEvents(
-        dialogEvents = favoritesViewModel.dialogEvent,
-        getCharacterByIdUseCase = getCharacterByIdUseCase,
-        onConfirmRemoveFavorite = favoritesViewModel::onConfirmRemoteFavorite
-    )
+//    val favoritesViewModel: FavoritesViewModel = hiltViewModel()
+//    
+//    ObserveUiEvents(
+//        uiEvents = favoritesViewModel.uiEvent,
+//        snackbarHostState = snackBarHostState
+//    )
+//
+//    ObserveDialogEvents(
+//        dialogEvents = favoritesViewModel.dialogEvent,
+//        getCharacterByIdUseCase = getCharacterByIdUseCase,
+//        onConfirmRemoveFavorite = favoritesViewModel::onConfirmRemoteFavorite
+//    )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
@@ -111,7 +111,20 @@ fun RickAndMortyApp(
                 )
             }
             composable (BottomBarItems.Favorites.route) {
-                FavoriteScreen()
+                val favoritesViewModel: FavoritesViewModel = hiltViewModel()
+                FavoriteScreen(
+                    viewModel = favoritesViewModel
+                )
+                ObserveUiEvents(
+                    uiEvents = favoritesViewModel.uiEvent,
+                    snackbarHostState = snackBarHostState
+                )
+                
+                ObserveDialogEvents(
+                    dialogEvents = favoritesViewModel.dialogEvent,
+                    getCharacterByIdUseCase = getCharacterByIdUseCase,
+                    onConfirmRemoveFavorite = favoritesViewModel::onConfirmRemoteFavorite
+                )
             }
             composable(BottomBarItems.Categories.route) {
                 val categoriesViewModel: CategoriesViewModel = hiltViewModel()
