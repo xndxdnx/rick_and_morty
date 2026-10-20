@@ -28,9 +28,9 @@ abstract class BaseViewModel() : ViewModel() {
         }
     }
     
-    protected fun showError (title: String, message: String) {
-        sendDialogEvent(DialogEvent.ShowError(title = title, message = message))
-    }    
+//    protected fun showError (title: String, message: String) {
+//        sendDialogEvent(DialogEvent.ShowError(title = title, message = message))
+//    }    
     
     protected fun showSnackBar(message: String) {
         sendUiEvent(UiEvent.ShowSnackBar(message = message))
